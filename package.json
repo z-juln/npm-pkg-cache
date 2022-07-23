@@ -1,0 +1,38 @@
+{
+  "name": "npm-pkg-cache",
+  "version": "1.0.0",
+  "description": "npm包缓存管理",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist/*",
+    "src/*"
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/z-juln/npm-pkg-cache.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/z-juln/npm-pkg-cache/issues"
+  },
+  "homepage": "https://github.com/z-juln/npm-pkg-cache#readme",
+  "dependencies": {
+    "@juln/npm-pkg-version": "^1.0.3",
+    "cross-spawn": "^7.0.3",
+    "fs-extra": "^10.1.0",
+    "semver": "^7.3.7"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.2",
+    "@types/fs-extra": "^9.0.13",
+    "@types/semver": "^7.3.10",
+    "typescript": "^4.7.4"
+  }
+}
