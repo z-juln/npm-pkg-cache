@@ -1,6 +1,6 @@
 {
   "name": "npm-pkg-cache",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "npm包缓存管理",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",

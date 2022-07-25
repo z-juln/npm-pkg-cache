@@ -48,9 +48,15 @@ class NPMPkgCache<PkgName extends string> {
     await exec('npm', ['i', `${pkgName}@${npmTag}`, `--registry=${registryUrl}`], { stdio: 'inherit', cwd: this.cacheDir });
   }
 
-  getPkgPath(pkgName: PkgName) {
+  getPkgPath(pkgName: PkgName, opts?: {
+    slience?: boolean,
+  }) {
+    const { slience } = Object.assign({
+      slience: false,
+    }, this.opts, opts);
+
     const pkgPath = path.resolve(this.cacheDir, 'node_modules', pkgName);
-    if (!fs.existsSync(pkgPath)) return null;
+    if (!slience && !fs.existsSync(pkgPath)) return null;
     return pkgPath;
   }
 
