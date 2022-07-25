@@ -15,7 +15,7 @@ const exec = (...args: Parameters<typeof spawn>) => {
 
 const defaultCacheDir = path.resolve(os.homedir(), '.npm-pkg-cache');
 
-class NPMPkgCache {
+class NPMPkgCache<PkgName extends string> {
   constructor(public cacheDir = defaultCacheDir, public opts?: {
     registryUrl?: string;
     npmTag?: string;
@@ -31,7 +31,7 @@ class NPMPkgCache {
     await fs.rm(this.cacheDir, { recursive: true });
   }
 
-  async cache(pkgName: string, opts?: {
+  async cache(pkgName: PkgName, opts?: {
     registryUrl?: string;
     npmTag?: string;
   }) {
@@ -48,13 +48,13 @@ class NPMPkgCache {
     await exec('npm', ['i', `${pkgName}@${npmTag}`, `--registry=${registryUrl}`], { stdio: 'inherit', cwd: this.cacheDir });
   }
 
-  getPkgPath(pkgName: string) {
+  getPkgPath(pkgName: PkgName) {
     const pkgPath = path.resolve(this.cacheDir, 'node_modules', pkgName);
     if (!fs.existsSync(pkgPath)) return null;
     return pkgPath;
   }
 
-  getPackageJSON(pkgName: string) {
+  getPackageJSON(pkgName: PkgName) {
     const pkgPath = this.getPkgPath(pkgName);
     if (pkgPath === null) return null;
     const packageJSONPath = path.resolve(pkgPath, 'package.json');
@@ -62,7 +62,7 @@ class NPMPkgCache {
     return packageJSON as Record<string, any>;
   }
 
-  checkUpdate = async (pkgName: string, opts?: {
+  checkUpdate = async (pkgName: PkgName, opts?: {
     registryUrl?: string;
     npmTag?: string;
   }) => {
@@ -82,7 +82,8 @@ class NPMPkgCache {
 export default NPMPkgCache;
 
 // (async function test() {
-//   const cacher = new NPMPkgCache(path.resolve(__dirname, '../test-dist'));
+//   const pkgs = ['fs-extra', 'cross-spawn'] as const;
+//   const cacher = new NPMPkgCache<typeof pkgs[number]>(path.resolve(__dirname, '../test-dist'));
 //   await cacher.cache('fs-extra');
 //   const pkgPath = cacher.getPkgPath('fs-extra');
 //   const packageJSON = cacher.getPackageJSON('fs-extra');
