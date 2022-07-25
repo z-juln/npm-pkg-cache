@@ -16,7 +16,14 @@ const exec = (...args: Parameters<typeof spawn>) => {
 const defaultCacheDir = path.resolve(os.homedir(), '.npm-pkg-cache');
 
 class NPMPkgCache {
-  constructor(public cacheDir = defaultCacheDir) {
+  constructor(public cacheDir = defaultCacheDir, public opts?: {
+    registryUrl?: string;
+    npmTag?: string;
+  }) {
+    this.opts = Object.assign({
+      registryUrl: 'https://registry.npmjs.org/',
+      npmTag: 'latest',
+    }, opts);
     fs.ensureDirSync(cacheDir);
   }
 
@@ -31,7 +38,7 @@ class NPMPkgCache {
     const { registryUrl, npmTag } = Object.assign({
       registryUrl: 'https://registry.npmjs.org/',
       npmTag: 'latest',
-    }, opts);
+    }, this.opts, opts);
 
     if (!await this.checkUpdate(pkgName, { registryUrl, npmTag })) return;
 
@@ -59,10 +66,15 @@ class NPMPkgCache {
     registryUrl?: string;
     npmTag?: string;
   }) => {
+    const { registryUrl, npmTag } = Object.assign({
+      registryUrl: 'https://registry.npmjs.org/',
+      npmTag: 'latest',
+    }, this.opts, opts);
+
     const packageJSON = this.getPackageJSON(pkgName);
     if (packageJSON === null) return true;
     const { version: currentVersion } = packageJSON;
-    const latestVersion = await getLatestVersion(pkgName, opts);
+    const latestVersion = await getLatestVersion(pkgName, { registryUrl, npmTag });
     return !!latestVersion && semver.lt(currentVersion, latestVersion);
   };
 }
