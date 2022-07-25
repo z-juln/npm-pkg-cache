@@ -48,15 +48,15 @@ class NPMPkgCache<PkgName extends string> {
     await exec('npm', ['i', `${pkgName}@${npmTag}`, `--registry=${registryUrl}`], { stdio: 'inherit', cwd: this.cacheDir });
   }
 
-  getPkgPath(pkgName: PkgName, opts?: {
-    slience?: boolean,
-  }) {
+  getPkgPath<Slience extends boolean = false>(pkgName: PkgName, opts?: {
+    slience?: Slience,
+  }): Slience extends true ? string : string | null {
     const { slience } = Object.assign({
       slience: false,
     }, this.opts, opts);
 
     const pkgPath = path.resolve(this.cacheDir, 'node_modules', pkgName);
-    if (!slience && !fs.existsSync(pkgPath)) return null;
+    if (!slience && !fs.existsSync(pkgPath)) return (null as any);
     return pkgPath;
   }
 
@@ -91,7 +91,7 @@ export default NPMPkgCache;
 //   const pkgs = ['fs-extra', 'cross-spawn'] as const;
 //   const cacher = new NPMPkgCache<typeof pkgs[number]>(path.resolve(__dirname, '../test-dist'));
 //   await cacher.cache('fs-extra');
-//   const pkgPath = cacher.getPkgPath('fs-extra');
+//   const pkgPath = cacher.getPkgPath('fs-extra', { slience: true });
 //   const packageJSON = cacher.getPackageJSON('fs-extra');
 //   const canUpdate = await cacher.checkUpdate('fs-extra');
 //   console.log({
